@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lj.demo.mapper.DocMapper">
+    <select id="findAllDocument" parameterType="java.util.HashMap" resultMap="docMap">
+        select d.dId,d.dName,u.uName,d.upTime,d.docIntegral,d.dType from document d,user u where d.uId = u.uId
+        <if test="dName != null">
+            and dName like concat('%',#{dName},'%')
+        </if>
+        <if test="dType != null">
+            and dType = #{dType}
+        </if>
+        <choose>
+            <when test="startTime != null and endTime != null">
+                and upTime between #{startTime} and #{endTime}
+            </when>
+            <otherwise>
+                <if test="startTime != null">
+                    and upTime &gt;= #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and upTime &lt;= #{endTime}
+                </if>
+            </otherwise>
+        </choose>
+        order by d.dId limit #{offset},#{limit}
+    </select>
+    <resultMap id="docMap" type="cn.lj.demo.bean.Document">
+        <id property="dId" column="dId" />
+        <result property="dName" column="dName" />
+        <result property="upTime" column="upTime" />
+        <result property="docIntegral" column="docIntegral" />
+        <result property="dType" column="dType" />
+
+        <association property="user" column="uId" javaType="cn.lj.demo.bean.User">
+            <id property="uId" column="uId" />
+            <result property="uName" column="uName" />
+        </association>
+    </resultMap>
+</mapper>

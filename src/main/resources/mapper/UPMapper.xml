@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lj.demo.mapper.UPMapper">
+    <select id="find" parameterType="String" resultMap="upMap">
+        select * from parameter p,user u where u.pId=p.pId and u.uId = 3
+    </select>
+    <resultMap id="upMap" type="cn.lj.demo.bean.User">
+        <id property="uId" column="uId"></id>
+        <result property="uName" column="uName"></result>
+        <association property="parameter" column="pId" javaType="cn.lj.demo.bean.Parameter">
+            <id property="pId" column="pId"></id>
+            <result property="pName" column="pName"></result>
+        </association>
+    </resultMap>
+</mapper>

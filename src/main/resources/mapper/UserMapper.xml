@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.lj.demo.mapper.UserMapper">
+    <select id="findAllUser" parameterType="java.util.HashMap" resultType="cn.lj.demo.bean.User">
+        select u.uId,u.uName,u.regTime,u.integral,u.upLoads,u.downLoadTimes,p.pName from user u,parameter p where u.pId = p.pId
+        <if test="uName != null">
+            and uName like concat('%',#{uName},'%')
+        </if>
+        <choose>
+            <when test="startTime != null and endTime != null">
+                and regTime between #{startTime} and #{endTime}
+            </when>
+            <otherwise>
+                <if test="startTime != null">
+                    and regTime &gt; #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and regTime &lt; #{endTime}
+                </if>
+            </otherwise>
+        </choose>
+        order by u.uId limit #{offset},#{limit}
+    </select>
+
+    <select id="login" parameterType="java.util.HashMap" resultType="cn.lj.demo.bean.User">
+        select * from user
+        <where>
+            <if test="loginAccount != null">
+                account = #{loginAccount}
+            </if>
+            <if test="loginPassword != null">
+                and password = #{loginPassword}
+            </if>
+        </where>
+    </select>
+
+    <select id="checkAccount" parameterType="java.util.HashMap" resultType="cn.lj.demo.bean.User">
+        select account,uName from user
+        <where>
+            <if test="registerAccount != null">
+                account = #{registerAccount}
+            </if>
+        </where>
+    </select>
+
+    <insert id="register" parameterType="java.util.HashMap">
+        insert into user(account,password,uName,sex,education,profession,phone,email,regTime,integral)
+        values (#{registerAccount},#{registerPassword},#{registerUsername},#{registerSex},#{registerEducation},#{registerProfession},#{registerPhone},#{registerEmail},#{registerTime},10)
+    </insert>
+
+
+<!--    <select id="findOne" parameterType="java.util.HashMap" resultMap="userMap">-->
+<!--        select * from user-->
+<!--    </select>-->
+<!--    <resultMap id="userMap" type="cn.itcast.bean.User">-->
+<!--        <id property="实体属性名" column="字段名" javaType="属性数据类型" jdbcType="字段数据类型"></id>-->
+<!--    </resultMap>-->
+
+<!--    <delete id="delUsers" parameterType="java.util.List">-->
+<!--        delete from user where uId in-->
+<!--        <foreach collection="ids" open="(" separator="," close=")" item="uId">-->
+<!--            #{uId}-->
+<!--        </foreach>-->
+<!--    </delete>-->
+</mapper>
